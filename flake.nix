@@ -3,22 +3,23 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    flake-utils.url  = "github:numtide/flake-utils";
   };
 
-  outputs =
-    { self, nixpkgs }:
+  outputs = { self, nixpkgs, rust-overlay, flake-utils, ... }: flake-utils.lib.eachDefaultSystem (system:
     let
-      system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
-
-    in
-    {
-      packages.${system}.default = pkgs.rustPlatform.buildRustPackage {
-        pname = "i3bar-river";
-        version = "1.1.0-hypr";
+      overlays = [ (import rust-overlay) ];
+      pkgs = import nixpkgs { inherit system overlays; };
+      cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
+    in {
+      packages.default = pkgs.rustPlatform.buildRustPackage {
+        pname = cargoToml.package.name;
+        version = cargoToml.package.version + "-hypr";
 
         src = ./.;
-        cargoHash = "sha256-8sub8cXC/1iDY6v/9opO4FiLAo9CFrGJSDPNQydGvhQ=";
+
+        cargoLock.lockFile = ./Cargo.lock;
 
         cargoBuildFlags = [
           "--no-default-features"
@@ -31,12 +32,22 @@
         cargoRelease = true;
 
         meta = with pkgs.lib; {
-          description = "Fork of i3bar-river Hyprland-only";
-          homepage = "https://github.com/EdwinLeeford/i3bar-river";
+          description = cargoToml.package.description;
+          homepage = cargoToml.package.repository;
           license = licenses.gpl3Only;
           mainProgram = "i3bar-river";
         };
-
       };
-    };
+
+      devShells.default = with pkgs; mkShell {
+        nativeBuildInputs = [ pkgs.pkg-config ];
+        buildInputs = [
+          pango
+          (rust-bin.beta.latest.default.override {
+            extensions = [ "rust-src" ];
+          })
+        ];
+      };
+    }
+  );
 }
