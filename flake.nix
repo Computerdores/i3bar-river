@@ -12,19 +12,15 @@
       overlays = [ (import rust-overlay) ];
       pkgs = import nixpkgs { inherit system overlays; };
       cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
-    in {
-      packages.default = pkgs.rustPlatform.buildRustPackage {
+      buildPackageWith = cargoFlags: suffix: pkgs.rustPlatform.buildRustPackage {
         pname = cargoToml.package.name;
-        version = cargoToml.package.version + "-hypr";
+        version = cargoToml.package.version + suffix;
 
         src = ./.;
 
         cargoLock.lockFile = ./Cargo.lock;
 
-        cargoBuildFlags = [
-          "--no-default-features"
-          "--features=hyprland"
-        ];
+        cargoBuildFlags = cargoFlags;
 
         nativeBuildInputs = [ pkgs.pkg-config ];
         buildInputs = [ pkgs.pango ];
@@ -37,6 +33,12 @@
           license = licenses.gpl3Only;
           mainProgram = "i3bar-river";
         };
+      };
+      buildForWM = wm: buildPackageWith [ "--no-default-features" ("--features="+wm) ] ("-" + wm);
+      wms = [ "river" "niri" "hyprland" ];
+    in {
+      packages = (builtins.listToAttrs (map (wm: { name = wm; value = buildForWM wm; }) wms)) // {
+        default = buildPackageWith [] "";
       };
 
       devShells.default = with pkgs; mkShell {
