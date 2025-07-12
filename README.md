@@ -89,6 +89,9 @@ start_hidden = false # whether the bar is initially in the 'hidden' state
 [wm.river]
 max_tag = 9 # Show only the first nine tags
 
+[wm.hyprland]
+show_empty = true # whether to show empty workspaces
+
 # Per output overrides
 # [output.your-output-name]
 # right now only "enable" option is available
