@@ -125,11 +125,10 @@ fn hyprland_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()
                         let (_monitor, active_ws) = data.split_once(',').ok_or_else(|| {
                             io::Error::new(io::ErrorKind::InvalidData, "Too few fields in data")
                         })?;
-                        hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
                         hyprland.active_name = active_ws.to_owned();
                         updated = true;
                     },
-                    "createworkspace" | "openwindow" | "closewindow" => {
+                    "createworkspace" | "openwindow" | "closewindow" | "movewindow" => {
                         hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
                         updated = true;
                     }
