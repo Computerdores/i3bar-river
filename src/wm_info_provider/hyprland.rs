@@ -118,6 +118,7 @@ fn hyprland_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()
                 match event_type {
                     "workspace" => {
                         hyprland.active_name = data.to_owned();
+                        hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
                         updated = true;
                     },
                     "focusedmon" => {
