@@ -54,12 +54,12 @@ impl WmInfoProvider for HyprlandInfoProvider {
     fn get_tags(&self, output: &Output) -> Vec<Tag> {
         self.workspaces
             .iter()
-            .filter(|ws| ws.monitor == output.name && (self.show_empty || ws.windows > 0))
+            .filter(|ws| ws.monitor == output.name)
             .map(|ws| Tag {
                 id: ws.id,
                 name: ws.name.clone(),
                 is_focused: ws.name == self.active_name,
-                is_active: true,
+                is_active: self.show_empty || ws.windows > 0,
                 is_urgent: false,
             })
             .collect()
@@ -118,7 +118,6 @@ fn hyprland_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()
                 match event_type {
                     "workspace" => {
                         hyprland.active_name = data.to_owned();
-                        hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
                         updated = true;
                     },
                     "focusedmon" => {
@@ -131,7 +130,7 @@ fn hyprland_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()
                     "createworkspace" | "openwindow" | "closewindow" | "movewindow" => {
                         hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
                         updated = true;
-                    }
+                    },
                     _ => {},
                 }
             }
