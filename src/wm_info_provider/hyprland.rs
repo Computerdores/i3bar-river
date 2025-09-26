@@ -15,7 +15,7 @@ pub struct HyprlandInfoProvider {
     ipc: Ipc,
     workspaces: Vec<IpcWorkspace>,
     active_name: String,
-    show_empty: bool,
+    empty_is_active: bool,
 }
 
 impl HyprlandInfoProvider {
@@ -29,7 +29,7 @@ impl HyprlandInfoProvider {
                 .ok()?
                 .name,
             ipc,
-            show_empty: config.hyprland.show_empty,
+            empty_is_active: config.hyprland.empty_is_active,
         })
     }
 
@@ -59,7 +59,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
                 id: ws.id,
                 name: ws.name.clone(),
                 is_focused: ws.name == self.active_name,
-                is_active: self.show_empty || ws.windows > 0,
+                is_active: self.empty_is_active || ws.windows > 0,
                 is_urgent: false,
             })
             .collect()
@@ -114,24 +114,24 @@ fn hyprland_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()
     loop {
         match hyprland.ipc.next_event() {
             Ok(event) => {
-                let (event_type, data)  = event.split_once(">>").unwrap();
+                let (event_type, data) = event.split_once(">>").unwrap();
                 match event_type {
                     "workspace" => {
                         hyprland.active_name = data.to_owned();
                         updated = true;
-                    },
+                    }
                     "focusedmon" => {
                         let (_monitor, active_ws) = data.split_once(',').ok_or_else(|| {
                             io::Error::new(io::ErrorKind::InvalidData, "Too few fields in data")
                         })?;
                         hyprland.active_name = active_ws.to_owned();
                         updated = true;
-                    },
+                    }
                     "createworkspace" | "openwindow" | "closewindow" | "movewindow" => {
                         hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
                         updated = true;
-                    },
-                    _ => {},
+                    }
+                    _ => {}
                 }
             }
             Err(e) if e.kind() == io::ErrorKind::WouldBlock => break,

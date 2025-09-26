@@ -209,19 +209,21 @@ pub struct RiverConfig {
 
 impl Default for RiverConfig {
     fn default() -> Self {
-        Self { max_tag: 9, }
+        Self { max_tag: 9 }
     }
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields, default)]
 pub struct HyprlandConfig {
-    pub show_empty: bool,
+    pub empty_is_active: bool,
 }
 
 impl Default for HyprlandConfig {
     fn default() -> Self {
-        Self { show_empty: true, }
+        Self {
+            empty_is_active: true,
+        }
     }
 }
 
