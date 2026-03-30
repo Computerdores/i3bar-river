@@ -48,7 +48,7 @@ pub trait WmInfoProvider: Any {
         _conn: &mut Connection<State>,
         _output: &Output,
         _seat: WlSeat,
-        _tag_id: Option<u32>,
+        _tag_id: Option<i32>,
         _btn: PointerBtn,
     ) {
     }
@@ -75,7 +75,7 @@ pub fn bind(conn: &mut Connection<State>, config: &WmConfig) -> Box<dyn WmInfoPr
 
 #[derive(Debug)]
 pub struct Tag {
-    pub id: u32,
+    pub id: i32,
     pub name: String,
     pub is_focused: bool,
     pub is_active: bool,

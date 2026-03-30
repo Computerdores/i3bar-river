@@ -81,7 +81,7 @@ impl WmInfoProvider for RiverInfoProvider {
         };
         (1..=u8::min(self.max_tag, 32))
             .map(|tag| Tag {
-                id: tag as u32,
+                id: tag as i32,
                 name: tag.to_string(),
                 is_focused: status.focused_tags & (1 << (tag - 1)) != 0,
                 is_active: status.active_tags & (1 << (tag - 1)) != 0,
@@ -107,7 +107,7 @@ impl WmInfoProvider for RiverInfoProvider {
         conn: &mut Connection<State>,
         output: &Output,
         seat: WlSeat,
-        tag_id: Option<u32>,
+        tag_id: Option<i32>,
         btn: PointerBtn,
     ) {
         match btn {

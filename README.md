@@ -1,6 +1,7 @@
 # Changes from Upstream
 
 - merge: Nix Flake (MaxVerevkin#48)
+- merge: use i32 rather than u32 for workspace ids (MaxVerevkin#51)
 
 # i3bar-river
 

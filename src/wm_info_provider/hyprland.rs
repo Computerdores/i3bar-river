@@ -31,7 +31,7 @@ impl HyprlandInfoProvider {
         })
     }
 
-    fn set_workspace(&self, id: u32) {
+    fn set_workspace(&self, id: i32) {
         let _ = self.ipc.exec(&format!("/dispatch workspace {id}"));
     }
 }
@@ -68,7 +68,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
         _: &mut Connection<State>,
         output: &Output,
         _: WlSeat,
-        tag_id: Option<u32>,
+        tag_id: Option<i32>,
         btn: PointerBtn,
     ) {
         match btn {
@@ -200,7 +200,7 @@ impl Ipc {
 
 #[derive(Debug, serde::Deserialize)]
 struct IpcWorkspace {
-    id: u32,
+    id: i32,
     name: String,
     monitor: String,
 }

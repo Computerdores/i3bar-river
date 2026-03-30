@@ -33,8 +33,8 @@ pub struct Bar {
     tags: Vec<Tag>,
     layout_name: Option<String>,
     mode_name: Option<String>,
-    tags_btns: ButtonManager<u32>,
-    tags_computed: Vec<(u32, ColorPair, ComputedText)>,
+    tags_btns: ButtonManager<i32>,
+    tags_computed: Vec<(i32, ColorPair, ComputedText)>,
     layout_name_computed: Option<ComputedText>,
     mode_computed: Option<ComputedText>,
 }
