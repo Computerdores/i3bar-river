@@ -1,3 +1,7 @@
+# Changes from Upstream
+
+- merge: Nix Flake (MaxVerevkin#48)
+
 # i3bar-river
 
 This is a port of `i3bar` for wlroots-based window managers. Tags/workspaces are implemented for [river](https://codeberg.org/river/river), [hyprland](https://github.com/hyprwm/Hyprland) and [niri](https://github.com/YaLTeR/niri).
