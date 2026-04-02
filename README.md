@@ -90,7 +90,7 @@ start_hidden = false # whether the bar is initially in the 'hidden' state
 max_tag = 9 # Show only the first nine tags
 
 [wm.hyprland]
-empty_is_active = true # whether to consider empty workspaces as active
+always_show_persistent = true # whether to always show persistent workspaces, even if they are empty
 
 # Per output overrides
 # [output.your-output-name]

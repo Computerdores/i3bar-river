@@ -15,7 +15,7 @@ pub struct HyprlandInfoProvider {
     ipc: Ipc,
     workspaces: Vec<IpcWorkspace>,
     active_name: String,
-    empty_is_active: bool,
+    always_show_persistent: bool,
 }
 
 impl HyprlandInfoProvider {
@@ -29,7 +29,7 @@ impl HyprlandInfoProvider {
                 .ok()?
                 .name,
             ipc,
-            empty_is_active: config.hyprland.empty_is_active,
+            always_show_persistent: config.hyprland.always_show_persistent,
         })
     }
 
@@ -59,7 +59,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
                 id: ws.id,
                 name: ws.name.clone(),
                 is_focused: ws.name == self.active_name,
-                is_active: self.empty_is_active || ws.windows > 0,
+                is_active: ws.windows > 0 || (self.always_show_persistent && ws.ispersistent),
                 is_urgent: false,
             })
             .collect()
@@ -212,4 +212,5 @@ struct IpcWorkspace {
     name: String,
     monitor: String,
     windows: u32,
+    ispersistent: bool,
 }

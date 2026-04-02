@@ -216,13 +216,13 @@ impl Default for RiverConfig {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields, default)]
 pub struct HyprlandConfig {
-    pub empty_is_active: bool,
+    pub always_show_persistent: bool,
 }
 
 impl Default for HyprlandConfig {
     fn default() -> Self {
         Self {
-            empty_is_active: true,
+            always_show_persistent: true,
         }
     }
 }
