@@ -52,7 +52,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
     fn get_tags(&self, output: &Output) -> Vec<Tag> {
         self.workspaces
             .iter()
-            .filter(|ws| ws.monitor == output.name)
+            .filter(|ws| ws.monitor == output.name && !ws.name.starts_with("special:"))
             .map(|ws| Tag {
                 id: ws.id,
                 name: ws.name.clone(),
