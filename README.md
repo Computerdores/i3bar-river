@@ -1,8 +1,9 @@
 # Changes from Upstream
 
 - merge: Nix Flake (MaxVerevkin#48)
-- merge: use i32 rather than u32 for workspace ids (MaxVerevkin#51)
+- merge(hyprland): use i32 rather than u32 for workspace ids (MaxVerevkin#51)
 - merge(hyprland): consider empty workspaces inactive (MaxVerevkin#49)
+- merge(hyprland): hide special workspaces
 
 # i3bar-river
 
