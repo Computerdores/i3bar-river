@@ -67,17 +67,17 @@ impl ComputedText {
         let mut width = f64::from(text_width) + attr.padding_right + attr.padding_right;
         let height = f64::from(text_height);
 
-        if let Some(min_width) = attr.min_width {
-            if width < min_width {
-                let d = min_width - width;
-                width = min_width;
-                match attr.align {
-                    Align::Right => attr.padding_left += d,
-                    Align::Left => attr.padding_right += d,
-                    Align::Center => {
-                        attr.padding_left += d * 0.5;
-                        attr.padding_right += d * 0.5;
-                    }
+        if let Some(min_width) = attr.min_width
+            && width < min_width
+        {
+            let d = min_width - width;
+            width = min_width;
+            match attr.align {
+                Align::Right => attr.padding_left += d,
+                Align::Left => attr.padding_right += d,
+                Align::Center => {
+                    attr.padding_left += d * 0.5;
+                    attr.padding_right += d * 0.5;
                 }
             }
         }

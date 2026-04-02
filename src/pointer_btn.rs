@@ -10,7 +10,7 @@ const BTN_FORWARD: u32 = 0x115;
 const BTN_BACK: u32 = 0x116;
 // const BTN_TASK: u32 = 0x117;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum PointerBtn {
     Left,
     Middle,
@@ -19,13 +19,8 @@ pub enum PointerBtn {
     WheelUp,
     WheelDown,
     Back,
+    #[default]
     Unknown,
-}
-
-impl Default for PointerBtn {
-    fn default() -> Self {
-        Self::Unknown
-    }
 }
 
 impl From<u32> for PointerBtn {

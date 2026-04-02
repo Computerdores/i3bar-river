@@ -127,16 +127,17 @@ impl Bar {
         } else if self.tags_btns.is_between(x) {
             ss.wm_info_provider
                 .click_on_tag(conn, &self.output, seat, None, button);
-        } else if let Some((name, instance)) = self.blocks_btns.click(x) {
-            if let Some(cmd) = &mut ss.status_cmd {
-                cmd.send_click_event(&i3bar_protocol::Event {
-                    name: name.as_deref(),
-                    instance: instance.as_deref(),
-                    button,
-                    ..Default::default()
-                })?;
-            }
+        } else if let Some((name, instance)) = self.blocks_btns.click(x)
+            && let Some(cmd) = &mut ss.status_cmd
+        {
+            cmd.send_click_event(&i3bar_protocol::Event {
+                name: name.as_deref(),
+                instance: instance.as_deref(),
+                button,
+                ..Default::default()
+            })?;
         }
+
         Ok(())
     }
 
@@ -256,67 +257,67 @@ impl Bar {
         }
 
         // Display layout name
-        if ss.config.show_layout_name {
-            if let Some(layout_name) = &self.layout_name {
-                let text = self.layout_name_computed.get_or_insert_with(|| {
-                    ComputedText::new(
-                        layout_name,
-                        text::Attributes {
-                            font: &ss.config.font,
-                            padding_left: 25.0,
-                            padding_right: 25.0,
-                            min_width: None,
-                            align: Default::default(),
-                            markup: false,
-                        },
-                    )
-                });
-                text.render(
-                    &cairo_ctx,
-                    RenderOptions {
-                        x_offset: offset_left,
-                        bar_height: height_f,
-                        fg_color: ss.config.tag_inactive_fg,
-                        bg_color: None,
-                        r_left: 0.0,
-                        r_right: 0.0,
-                        overlap: 0.0,
+        if ss.config.show_layout_name
+            && let Some(layout_name) = &self.layout_name
+        {
+            let text = self.layout_name_computed.get_or_insert_with(|| {
+                ComputedText::new(
+                    layout_name,
+                    text::Attributes {
+                        font: &ss.config.font,
+                        padding_left: 25.0,
+                        padding_right: 25.0,
+                        min_width: None,
+                        align: Default::default(),
+                        markup: false,
                     },
-                );
-                offset_left += text.width;
-            }
+                )
+            });
+            text.render(
+                &cairo_ctx,
+                RenderOptions {
+                    x_offset: offset_left,
+                    bar_height: height_f,
+                    fg_color: ss.config.tag_inactive_fg,
+                    bg_color: None,
+                    r_left: 0.0,
+                    r_right: 0.0,
+                    overlap: 0.0,
+                },
+            );
+            offset_left += text.width;
         }
 
         // Display mode
-        if ss.config.show_mode {
-            if let Some(mode) = &self.mode_name {
-                let text = self.mode_computed.get_or_insert_with(|| {
-                    ComputedText::new(
-                        mode,
-                        text::Attributes {
-                            font: &ss.config.font,
-                            padding_left: 10.0,
-                            padding_right: 10.0,
-                            min_width: None,
-                            align: Default::default(),
-                            markup: false,
-                        },
-                    )
-                });
-                text.render(
-                    &cairo_ctx,
-                    RenderOptions {
-                        x_offset: offset_left,
-                        bar_height: height_f,
-                        fg_color: ss.config.tag_urgent_fg,
-                        bg_color: Some(ss.config.tag_urgent_bg),
-                        r_left: ss.config.tags_r,
-                        r_right: ss.config.tags_r,
-                        overlap: 0.0,
+        if ss.config.show_mode
+            && let Some(mode) = &self.mode_name
+        {
+            let text = self.mode_computed.get_or_insert_with(|| {
+                ComputedText::new(
+                    mode,
+                    text::Attributes {
+                        font: &ss.config.font,
+                        padding_left: 10.0,
+                        padding_right: 10.0,
+                        min_width: None,
+                        align: Default::default(),
+                        markup: false,
                     },
-                );
-                offset_left += text.width;
-            }
+                )
+            });
+            text.render(
+                &cairo_ctx,
+                RenderOptions {
+                    x_offset: offset_left,
+                    bar_height: height_f,
+                    fg_color: ss.config.tag_urgent_fg,
+                    bg_color: Some(ss.config.tag_urgent_bg),
+                    r_left: ss.config.tags_r,
+                    r_right: ss.config.tags_r,
+                    overlap: 0.0,
+                },
+            );
+            offset_left += text.width;
         }
 
         // Display the blocks

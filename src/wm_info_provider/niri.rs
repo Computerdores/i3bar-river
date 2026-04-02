@@ -136,14 +136,13 @@ fn niri_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()> {
                         niri.workspaces[new_active].is_active = true;
                         updated = true;
                     }
-                    if focused {
-                        if let Some(previous_focused) =
+                    if focused
+                        && let Some(previous_focused) =
                             niri.workspaces.iter().position(|ws| ws.is_focused)
-                        {
-                            niri.workspaces[previous_focused].is_focused = false;
-                            niri.workspaces[new_active].is_focused = true;
-                            updated = true;
-                        }
+                    {
+                        niri.workspaces[previous_focused].is_focused = false;
+                        niri.workspaces[new_active].is_focused = true;
+                        updated = true;
                     }
                 }
             }

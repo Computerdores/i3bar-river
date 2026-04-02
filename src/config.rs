@@ -185,20 +185,11 @@ impl From<Layer> for zwlr_layer_shell_v1::Layer {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default)]
 #[serde(deny_unknown_fields, default)]
 pub struct WmConfig {
     pub river: RiverConfig,
     pub hyprland: HyprlandConfig,
-}
-
-impl Default for WmConfig {
-    fn default() -> Self {
-        Self {
-            river: Default::default(),
-            hyprland: Default::default(),
-        }
-    }
 }
 
 #[derive(Debug, Deserialize)]
