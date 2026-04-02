@@ -2,6 +2,7 @@
 
 - merge: Nix Flake (MaxVerevkin#48)
 - merge: use i32 rather than u32 for workspace ids (MaxVerevkin#51)
+- merge(hyprland): consider empty workspaces inactive (MaxVerevkin#49)
 
 # i3bar-river
 
@@ -93,6 +94,9 @@ start_hidden = false # whether the bar is initially in the 'hidden' state
 # WM-specific options
 [wm.river]
 max_tag = 9 # Show only the first nine tags
+
+[wm.hyprland]
+always_show_persistent = true # whether to always show persistent workspaces, even if they are empty
 
 # Per output overrides
 # [output.your-output-name]

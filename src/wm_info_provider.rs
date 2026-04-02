@@ -61,7 +61,7 @@ pub fn bind(conn: &mut Connection<State>, config: &WmConfig) -> Box<dyn WmInfoPr
     }
 
     #[cfg(feature = "hyprland")]
-    if let Some(hyprland) = HyprlandInfoProvider::new() {
+    if let Some(hyprland) = HyprlandInfoProvider::new(config) {
         return Box::new(hyprland);
     }
 

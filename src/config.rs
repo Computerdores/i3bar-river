@@ -96,9 +96,7 @@ impl Default for Config {
             show_mode: true,
             start_hidden: false,
 
-            wm: WmConfig {
-                river: RiverConfig { max_tag: 9 },
-            },
+            wm: WmConfig::default(),
 
             output: HashMap::new(),
         }
@@ -188,13 +186,45 @@ impl From<Layer> for zwlr_layer_shell_v1::Layer {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields, default)]
 pub struct WmConfig {
     pub river: RiverConfig,
+    pub hyprland: HyprlandConfig,
+}
+
+impl Default for WmConfig {
+    fn default() -> Self {
+        Self {
+            river: Default::default(),
+            hyprland: Default::default(),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields, default)]
 pub struct RiverConfig {
     pub max_tag: u8,
+}
+
+impl Default for RiverConfig {
+    fn default() -> Self {
+        Self { max_tag: 9 }
+    }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields, default)]
+pub struct HyprlandConfig {
+    pub always_show_persistent: bool,
+}
+
+impl Default for HyprlandConfig {
+    fn default() -> Self {
+        Self {
+            always_show_persistent: true,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]

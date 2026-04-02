@@ -15,10 +15,11 @@ pub struct HyprlandInfoProvider {
     ipc: Ipc,
     workspaces: Vec<IpcWorkspace>,
     active_name: String,
+    always_show_persistent: bool,
 }
 
 impl HyprlandInfoProvider {
-    pub fn new() -> Option<Self> {
+    pub fn new(config: &WmConfig) -> Option<Self> {
         let his = std::env::var("HYPRLAND_INSTANCE_SIGNATURE").ok()?;
         let ipc = Ipc::new(&his)?;
         Some(Self {
@@ -28,6 +29,7 @@ impl HyprlandInfoProvider {
                 .ok()?
                 .name,
             ipc,
+            always_show_persistent: config.hyprland.always_show_persistent,
         })
     }
 
@@ -57,7 +59,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
                 id: ws.id,
                 name: ws.name.clone(),
                 is_focused: ws.name == self.active_name,
-                is_active: true,
+                is_active: ws.windows > 0 || (self.always_show_persistent && ws.ispersistent),
                 is_urgent: false,
             })
             .collect()
@@ -112,18 +114,24 @@ fn hyprland_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()
     loop {
         match hyprland.ipc.next_event() {
             Ok(event) => {
-                if let Some(active_ws) = event.strip_prefix("workspace>>") {
-                    hyprland.active_name = active_ws.to_owned();
-                    updated = true;
-                } else if let Some(data) = event.strip_prefix("focusedmon>>") {
-                    let (_monitor, active_ws) = data.split_once(',').ok_or_else(|| {
-                        io::Error::new(io::ErrorKind::InvalidData, "Too few fields in data")
-                    })?;
-                    hyprland.active_name = active_ws.to_owned();
-                    updated = true;
-                } else if event.contains("workspace>>") {
-                    hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
-                    updated = true;
+                let (event_type, data) = event.split_once(">>").unwrap();
+                match event_type {
+                    "workspace" => {
+                        hyprland.active_name = data.to_owned();
+                        updated = true;
+                    }
+                    "focusedmon" => {
+                        let (_monitor, active_ws) = data.split_once(',').ok_or_else(|| {
+                            io::Error::new(io::ErrorKind::InvalidData, "Too few fields in data")
+                        })?;
+                        hyprland.active_name = active_ws.to_owned();
+                        updated = true;
+                    }
+                    "createworkspace" | "openwindow" | "closewindow" | "movewindow" => {
+                        hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
+                        updated = true;
+                    }
+                    _ => {}
                 }
             }
             Err(e) if e.kind() == io::ErrorKind::WouldBlock => break,
@@ -203,4 +211,6 @@ struct IpcWorkspace {
     id: i32,
     name: String,
     monitor: String,
+    windows: u32,
+    ispersistent: bool,
 }
