@@ -1,18 +1,10 @@
-# Changes from Upstream
-
-- merge: Nix Flake (MaxVerevkin#48)
-- merge(hyprland): use i32 rather than u32 for workspace ids (MaxVerevkin#51)
-- merge(hyprland): consider empty workspaces inactive (MaxVerevkin#49)
-- merge(hyprland): hide special workspaces
-- fix: address clippy comments
-
 # i3bar-river
 
-This is a port of `i3bar` for wlroots-based window managers. Tags/workspaces are implemented for [river](https://codeberg.org/river/river), [hyprland](https://github.com/hyprwm/Hyprland) and [niri](https://github.com/YaLTeR/niri).
+This is a port of `i3bar` for wlroots-based window managers. Tags/workspaces are implemented for [river](https://codeberg.org/river/river), [hyprland](https://github.com/hyprwm/Hyprland) and [niri](https://github.com/YaLTeR/niri). Forked from [MaxVerevkin/i3bar-river](https://github.com/MaxVerevkin/i3bar-river).
 
 ## i3bar compatibility
 
-I've tested [`i3status-rs`](https://github.com/greshake/i3status-rust), [`bumblebee-status`](https://github.com/tobi-wan-kenobi/bumblebee-status) and [`py3status`](https://github.com/ultrabug/py3status) and everything seems usable.
+I actively use [`i3status-rs`](https://github.com/greshake/i3status-rust).
 
 A list of things that are missing (for now):
 - `border[_top|_right|_bottom|_left]`
@@ -25,10 +17,6 @@ A list of things that are missing (for now):
 - `short_text` switching is "progressive" (see https://github.com/i3/i3/issues/4113)
 - Support for rounded corners
 - Show/hide with `pkill -SIGUSR1 i3bar-river`
-
-## Installation
-
-[![Packaging status](https://repology.org/badge/vertical-allrepos/i3bar-river.svg)](https://repology.org/project/i3bar-river/versions)
 
 ### From Source
 
