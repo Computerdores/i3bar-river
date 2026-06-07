@@ -382,10 +382,8 @@ fn wl_pointer_cb(ctx: EventCtx<State, WlPointer>) {
         Event::AxisSource(source) => {
             pointer.scroll_frame.is_finger = source == wl_pointer::AxisSource::Finger;
         }
-        Event::AxisStop(args) => {
-            if args.axis == wl_pointer::Axis::VerticalScroll {
-                pointer.scroll_frame.stop = true;
-            }
+        Event::AxisStop(args) if args.axis == wl_pointer::Axis::VerticalScroll => {
+            pointer.scroll_frame.stop = true;
         }
         _ => (),
     }
