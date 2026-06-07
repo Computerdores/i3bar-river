@@ -34,7 +34,9 @@ impl HyprlandInfoProvider {
     }
 
     fn set_workspace(&self, id: i32) {
-        let _ = self.ipc.exec(&format!("/dispatch hl.dsp.focus({{ workspace = {id} }})"));
+        let _ = self
+            .ipc
+            .exec(&format!("/dispatch hl.dsp.focus({{ workspace = {id} }})"));
     }
 }
 
