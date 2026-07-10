@@ -137,7 +137,8 @@ fn hyprland_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()
                         hyprland.active_name = active_ws.to_owned();
                         updated = true;
                     }
-                    "createworkspace" | "openwindow" | "closewindow" | "movewindow" | "moveworkspace" => {
+                    "createworkspace" | "openwindow" | "closewindow" | "movewindow"
+                    | "moveworkspace" => {
                         hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
                         updated = true;
                     }
