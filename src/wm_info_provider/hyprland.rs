@@ -38,6 +38,14 @@ impl HyprlandInfoProvider {
             .ipc
             .exec(&format!("/dispatch hl.dsp.focus({{ workspace = {id} }})"));
     }
+
+    fn get_workspace_name(&self, ws: &IpcWorkspace) -> String {
+        let a = format!("m{}-", ws.monitorID);
+        if ws.name.starts_with(&a) {
+            return ws.name[a.len()..].into();
+        }
+        ws.name.clone()
+    }
 }
 
 impl WmInfoProvider for HyprlandInfoProvider {
@@ -59,7 +67,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
             .filter(|ws| ws.monitor == output.name && !ws.name.starts_with("special:"))
             .map(|ws| Tag {
                 id: ws.id,
-                name: ws.name.clone(),
+                name: self.get_workspace_name(ws),
                 is_focused: ws.name == self.active_name,
                 is_active: ws.windows > 0 || (self.always_show_persistent && ws.ispersistent),
                 is_urgent: false,
@@ -129,7 +137,7 @@ fn hyprland_cb(conn: &mut Connection<State>, state: &mut State) -> io::Result<()
                         hyprland.active_name = active_ws.to_owned();
                         updated = true;
                     }
-                    "createworkspace" | "openwindow" | "closewindow" | "movewindow" => {
+                    "createworkspace" | "openwindow" | "closewindow" | "movewindow" | "moveworkspace" => {
                         hyprland.workspaces = hyprland.ipc.query_sorted_workspaces()?;
                         updated = true;
                     }
@@ -208,11 +216,13 @@ impl Ipc {
     }
 }
 
+#[allow(non_snake_case)]
 #[derive(Debug, serde::Deserialize)]
 struct IpcWorkspace {
     id: i64,
     name: String,
     monitor: String,
+    monitorID: i64,
     windows: u32,
     ispersistent: bool,
 }

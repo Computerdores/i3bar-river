@@ -1,6 +1,9 @@
 # i3bar-river
 
-This is a port of `i3bar` for wlroots-based window managers. Tags/workspaces are implemented for [river](https://codeberg.org/river/river), [hyprland](https://github.com/hyprwm/Hyprland) and [niri](https://github.com/YaLTeR/niri). Forked from [MaxVerevkin/i3bar-river](https://github.com/MaxVerevkin/i3bar-river).
+This is a port of `i3bar` for wlroots-based window managers.
+Tags/workspaces are implemented for [River](https://codeberg.org/river/river), [Hyprland](https://github.com/hyprwm/Hyprland) and [Niri](https://github.com/YaLTeR/niri).
+Forked from [MaxVerevkin/i3bar-river](https://github.com/MaxVerevkin/i3bar-river).
+I actively use this fork in my Hyprland setup, but it isn't tested on River or Niri.
 
 ## i3bar compatibility
 
@@ -13,10 +16,10 @@ A list of things that are missing (for now):
 
 ## Features
 
-- `river` support (obviously)
 - `short_text` switching is "progressive" (see https://github.com/i3/i3/issues/4113)
 - Support for rounded corners
 - Show/hide with `pkill -SIGUSR1 i3bar-river`
+- hyprland: if workspaces are prefixed with `m{monitor id}-` (e.g. `m0-1`) then this prefix will not be shown (e.g. `1`). This enables having the same workspace name on multiple monitors.
 
 ### From Source
 
