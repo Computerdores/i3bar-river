@@ -33,7 +33,7 @@ impl HyprlandInfoProvider {
         })
     }
 
-    fn set_workspace(&self, id: i32) {
+    fn set_workspace(&self, id: i64) {
         let _ = self
             .ipc
             .exec(&format!("/dispatch hl.dsp.focus({{ workspace = {id} }})"));
@@ -72,7 +72,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
         _: &mut Connection<State>,
         output: &Output,
         _: WlSeat,
-        tag_id: Option<i32>,
+        tag_id: Option<i64>,
         btn: PointerBtn,
     ) {
         match btn {
@@ -210,7 +210,7 @@ impl Ipc {
 
 #[derive(Debug, serde::Deserialize)]
 struct IpcWorkspace {
-    id: i32,
+    id: i64,
     name: String,
     monitor: String,
     windows: u32,

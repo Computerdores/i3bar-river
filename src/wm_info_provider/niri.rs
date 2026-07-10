@@ -26,7 +26,7 @@ impl NiriInfoProvider {
         })
     }
 
-    fn set_workspace(&self, idx: i32) {
+    fn set_workspace(&self, idx: i64) {
         let _ = self.ipc.exec(&format!(
             r#"{{"Action":{{"FocusWorkspace":{{"reference":{{"Index":{idx}}}}}}}}}"#
         ));
@@ -78,7 +78,7 @@ impl WmInfoProvider for NiriInfoProvider {
         _: &mut Connection<State>,
         output: &Output,
         _: WlSeat,
-        tag_id: Option<i32>,
+        tag_id: Option<i64>,
         btn: PointerBtn,
     ) {
         match btn {
@@ -204,8 +204,8 @@ impl Ipc {
 
 #[derive(Debug, serde::Deserialize)]
 struct IpcWorkspace {
-    id: i32,  // Niri's internal id is monotonic, only used for comparison.
-    idx: i32, // idx is the user-facing workspace number.
+    id: i64,  // Niri's internal id is monotonic, only used for comparison.
+    idx: i64, // idx is the user-facing workspace number.
     name: Option<String>,
     output: String,
     is_focused: bool,
@@ -219,7 +219,7 @@ enum IpcEvent {
         workspaces: Vec<IpcWorkspace>,
     },
     WorkspaceActivated {
-        id: i32,
+        id: i64,
         focused: bool,
     },
     #[serde(untagged)]
