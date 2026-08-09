@@ -1,6 +1,6 @@
 #![allow(clippy::collapsible_else_if)]
 
-use std::io::{self, Write};
+use std::io::{self, Read, Write};
 use std::os::fd::AsRawFd;
 use std::os::unix::net::UnixStream;
 use std::path::PathBuf;
@@ -184,6 +184,11 @@ impl Ipc {
         let mut sock = UnixStream::connect(&self.sock1_path)?;
         sock.write_all(cmd.as_bytes())?;
         sock.flush()?;
+        let mut buf = String::new();
+        sock.read_to_string(&mut buf)?;
+        if buf != "ok" {
+            println!("exec '{cmd}' result: {buf}");
+        }
         Ok(())
     }
 
