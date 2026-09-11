@@ -64,9 +64,9 @@ impl WmInfoProvider for HyprlandInfoProvider {
     fn get_tags(&self, output: &Output) -> Vec<Tag> {
         self.workspaces
             .iter()
-            .filter(|ws| ws.monitor == output.name && !ws.name.starts_with("special:"))
+            .filter(|ws| ws.monitor == output.name)
             .map(|ws| Tag {
-                id: ws.id,
+                id: ws.id(),
                 name: self.get_workspace_name(ws),
                 is_focused: ws.name == self.active_name,
                 is_active: ws.windows > 0 || (self.always_show_persistent && ws.ispersistent),
@@ -100,7 +100,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
                             .iter()
                             .rfind(|ws| ws.monitor == output.name)
                         {
-                            self.set_workspace(prev.id);
+                            self.set_workspace(prev.id());
                         }
                     } else {
                         if let Some(next) = self.workspaces[active_i..]
@@ -108,7 +108,7 @@ impl WmInfoProvider for HyprlandInfoProvider {
                             .skip(1)
                             .find(|ws| ws.monitor == output.name)
                         {
-                            self.set_workspace(next.id);
+                            self.set_workspace(next.id());
                         }
                     }
                 }
@@ -196,12 +196,22 @@ impl Ipc {
         let mut sock = UnixStream::connect(&self.sock1_path)?;
         sock.write_all(cmd.as_bytes())?;
         sock.flush()?;
-        serde_json::from_reader(&mut sock).map_err(Into::into)
+
+        // read to end, before socket closes; this is apparently not handled correctly by serde_json
+        let mut buf = Vec::new();
+        sock.read_to_end(&mut buf)?;
+
+        // parse read data and return
+        serde_json::from_slice(&buf).map_err(Into::into)
     }
 
     fn query_sorted_workspaces(&self) -> io::Result<Vec<IpcWorkspace>> {
-        let mut workspaces = self.query_json::<Vec<IpcWorkspace>>("j/workspaces")?;
-        workspaces.sort_unstable_by_key(|x| x.id);
+        let workspaces = self.query_json::<Vec<IpcWorkspace>>("j/workspaces")?;
+        let mut workspaces: Vec<_> = workspaces
+            .into_iter()
+            .filter(|ws| ws.r#type != "special")
+            .collect();
+        workspaces.sort_unstable_by_key(|x| x.id());
         Ok(workspaces)
     }
 
@@ -225,10 +235,18 @@ impl Ipc {
 #[allow(non_snake_case)]
 #[derive(Debug, serde::Deserialize)]
 struct IpcWorkspace {
-    id: i64,
+    address: String,
+    r#type: String,
     name: String,
     monitor: String,
     monitorID: i64,
     windows: u32,
     ispersistent: bool,
+}
+
+impl IpcWorkspace {
+    fn id(&self) -> i64 {
+        assert!(self.r#type == "numbered");
+        self.address.parse().unwrap()
+    }
 }

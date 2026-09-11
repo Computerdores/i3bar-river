@@ -57,19 +57,23 @@ pub trait WmInfoProvider: Any {
 pub fn bind(conn: &mut Connection<State>, config: &WmConfig) -> Box<dyn WmInfoProvider> {
     #[cfg(feature = "river")]
     if let Some(river) = RiverInfoProvider::bind(conn, config) {
+        println!("Choosing River");
         return Box::new(river);
     }
 
     #[cfg(feature = "hyprland")]
     if let Some(hyprland) = HyprlandInfoProvider::new(config) {
+        println!("Choosing Hyprland");
         return Box::new(hyprland);
     }
 
     #[cfg(feature = "niri")]
     if let Some(niri) = NiriInfoProvider::new() {
+        println!("Choosing Niri");
         return Box::new(niri);
     }
 
+    println!("Choosing Dummy");
     Box::new(DummyInfoProvider)
 }
 
